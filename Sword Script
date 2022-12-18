@@ -1,0 +1,148 @@
+wait(2)
+
+local swordname = "Russo's Sword"
+local sword
+local player = game.Players.LocalPlayer
+local chr = player.Character
+if chr:FindFirstChild(swordname) then
+	sword = chr:FindFirstChild(swordname)
+	if not sword:IsA("Accessory") then
+		print("Your sword is not an accessory.")
+		script:Destroy()
+	end
+else
+	print("Sword not found.")
+	script:Destroy()
+end
+
+wait(0.5)
+print("Sword found: "..sword.Name) 
+
+chr.Humanoid.UseJumpPower = true
+local uis = game:GetService("UserInputService")
+local equipped = false
+local music = Instance.new("Sound", sword)
+local cam = game.Workspace.CurrentCamera
+local swingsound = Instance.new("Sound", sword)
+local diesound = Instance.new("Sound", sword)
+local equipsound = Instance.new("Sound", sword)
+local unequipsound = Instance.new("Sound", sword)
+local canswing = true
+local canulti = true
+local ulticooldown = 4.5
+local ultianim = Instance.new("Animation", chr)
+ultianim.AnimationId = "rbxassetid://11852104644"
+wait(2)
+local ultiloaded = chr.Humanoid:LoadAnimation(ultianim)
+local swingcooldown = 1
+local killsound = Instance.new("Sound", sword)
+local mouse = player:GetMouse()
+local musicdistortion = Instance.new("DistortionSoundEffect", music)
+local musicreverb = Instance.new("ReverbSoundEffect", music)
+
+musicdistortion.Level = 0.75
+musicreverb.DecayTime = 0.5
+musicreverb.DryLevel = 0.2
+musicdistortion.Enabled = false
+musicreverb.Enabled = false
+sword.Handle.Transparency = 1
+music.SoundId = "rbxassetid://1843497734"
+music.Volume = 0.2
+music.Looped = true
+music:Play()
+equipsound.SoundId = "rbxassetid://130785405"
+equipsound.Volume = 3.5
+unequipsound.SoundId = "rbxassetid://7886392420"
+unequipsound.Volume = 3.5
+killsound.SoundId = "rbxassetid://5852674697"
+killsound.Volume = 4
+diesound.SoundId = "rbxassetid://7444319409"
+diesound.Volume = 4
+swingsound.SoundId = "rbxassetid://7171591581"
+swingsound.Volume = 1
+
+local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+local TextLabel = Instance.new("TextLabel", ScreenGui)
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.Position = UDim2.new(0.0533333272, 0, 0.709551632, 0)
+TextLabel.Rotation = -25.000
+TextLabel.Size = UDim2.new(0, 506, 0, 139)
+TextLabel.Font = Enum.Font.Creepster
+TextLabel.Text = "KILL THEM ALL!!"
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+TextLabel.Visible = false
+
+wait(1)
+print("Script started executing.")
+
+function died()
+	diesound:Play()
+end
+
+function onequipped()
+	equipped = true
+	cam.FieldOfView = 90
+	musicreverb.Enabled = true
+	musicdistortion.Enabled = true
+	music.Volume = 0.5
+	TextLabel.Visible = true
+	chr.Humanoid.WalkSpeed = 48
+	chr.Humanoid.JumpPower = 150
+	equipsound:Play()
+	sword.Handle.Transparency = 0
+end
+
+function onunequipped()
+	musicreverb.Enabled = false
+	musicdistortion.Enabled = false
+	cam.FieldOfView = 70
+	music.Volume = 0.2
+	TextLabel.Visible = false
+	chr.Humanoid.WalkSpeed = 16
+	chr.Humanoid.JumpPower = 50
+	sword.Handle.Transparency = 1
+	unequipsound:Play()
+	equipped = false
+end
+
+uis.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.F then
+		if equipped == false then
+			onequipped()
+		else
+			onunequipped()
+		end
+	end
+end)
+
+function ulti()
+	if canulti == true and equipped == true then
+		canulti = false
+		ultiloaded:Play()
+		wait(ulticooldown)
+		canulti = true
+	end
+end
+
+function swing()
+	if canswing == true and equipped == true then
+		canswing = false
+		swingsound:Play()
+		wait(swingcooldown)
+		canswing = true
+	end
+end
+
+chr.Humanoid.Died:Connect(died)
+mouse.Button1Down:Connect(swing)
+
+uis.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.E then
+		ulti()
+	end
+end)
