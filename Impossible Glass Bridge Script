@@ -1,0 +1,11 @@
+game.Players.LocalPlayer:GetMouse().Button1Down:Connect(function()
+    local mouse = game.Players.LocalPlayer:GetMouse()
+    local target = mouse.Target
+    if target.Name == "1" or target.Name == "2" then
+        if target:FindFirstChildOfClass("Sound") then
+            target.BrickColor = BrickColor.new("Really red")
+        else
+            target.BrickColor = BrickColor.new("Lime green")
+        end
+    end
+end)
